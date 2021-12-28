@@ -1,13 +1,15 @@
 <template>
-
-    <img class="img" src='../assets/corona2.png' ref="imgCorona">
-    <img class="img" src='../assets/sanitizer2.png' ref="imgSanitizer" style="transform: rotate(90deg);">
-    <canvas  
-    @click = "isClicked"
-    id="canvas">
-    </canvas>
-
-    <div @keyup.space="moveLeft">Nekineki</div>
+    <div class="Content">
+        <div class="game">
+            <img class="img" src='../assets/corona2.png' ref="imgCorona">
+            <img class="img" src='../assets/sanitizer2.png' ref="imgSanitizer" style="transform: rotate(90deg);">
+            <canvas  
+            @click = "isClicked"
+            id="canvas">
+            </canvas>
+        </div>
+    </div>
+    
 
 </template>
 
@@ -25,7 +27,7 @@ export default {
             canvas: null,
             ctx: null,
             balls: [],
-            gravity: 0.25,
+            gravity: 0.01,
             friction: 0.98,
             coronaImg: "",
             ball: {
@@ -58,7 +60,7 @@ export default {
     methods: { 
         
         moveLeft(event) {
-            if (this.tipka === 97) {
+            if (this.tipka === 97 && this.weapon.x >= 0) {
                
                 this.weapon.x = this.weapon.x-10;
             }
@@ -66,7 +68,7 @@ export default {
         },
 
         moveRight() {
-            if (this.tipka === 100) {
+            if (this.tipka === 100 && (this.weapon.x <= this.canvas.width - this.weapon.width)) {
                 this.weapon.x = this.weapon.x+10;
             }
         },
@@ -90,12 +92,13 @@ export default {
             let bulletStartingPointY = this.weapon.y - (this.weapon.height/2);
 
 
-            
+            /*
             console.log("Weapon x: ", this.weapon.x, "Weapon y: ", this.weapon.y);
             console.log("Bullet x: ", bulletStartingPointX, "Bullet y: ", bulletStartingPointY);
             console.log("Vrednost tipke: ", this.tipka);
-            
-
+            console.log("Canvas x: ", this.canvas.width, "Canvas y: ", this.canvas.height)
+        */
+            console.log(this.$store.state.settings);
             
             this.shootSanitizer();
             /*
@@ -133,11 +136,14 @@ export default {
             }
 
 
+
+
             this.moveLeft();
             this.moveRight();
             this.moveSanitizer();
             this.colission();
-            this.ballToBallColission();
+            this.sanitizerToBallCollision();
+            this.weapontoWallsColission();
             this.draw();
             this.drawSanitizer();
             this.drawWeapon();
@@ -151,9 +157,9 @@ export default {
     
             this.canvas = document.getElementById("canvas");
             this.ctx = this.canvas.getContext("2d"); 
-            this.canvas.width = window.innerWidth;
+            this.canvas.width = window.innerWidth / 3 * 2;
             this.canvas.height = window.innerHeight-120;
-
+            this.gravity = this.$store.state.settings.gravity;
             /*
             this.ball = {
                 bounce: 0.75, // energy lost on bounce (25%)
@@ -166,7 +172,7 @@ export default {
 
             
 
-            this.initBalls(5);
+            this.initBalls(this.$store.state.settings.coronaSpawned);
             this.initWeapon();
             this.loop();
             /*  this.update();  */
@@ -184,7 +190,7 @@ export default {
                 x: this.canvas.width / 2,
                 y: this.ball.radius,
                 velX: (Math.random() * 7 + 5) * (Math.floor(Math.random() * 2) || -1),
-                velY: (Math.random() * 7 + 5) * (Math.floor(Math.random() * 2) || -1)
+                velY: (Math.random() * 1 + 1) * (Math.floor(Math.random() * 2) || -1)
                 }
                 this.balls.push(this.ball);
             }
@@ -201,6 +207,8 @@ export default {
                 velY: -5,
                 }
                 this.sanitizers.push(this.sanitizer);
+                this.$store.state.bullets +=1;
+                console.log(this.$store.state.bullets);
                 console.log(this.sanitizers);
             }
         
@@ -213,7 +221,7 @@ export default {
         drawSanitizer() {
             for (let i = 0; i < this.sanitizers.length; i++) {
                 this.ctx.beginPath();
-                this.ctx.fillStyle = "red";
+                this.ctx.fillStyle = "lightblue";
                 this.ctx.arc(
                     this.sanitizers[i].x,
                     this.sanitizers[i].y,
@@ -270,20 +278,6 @@ export default {
             
         },
 
-    /*
-     update() {
-        window.requestAnimationFrame(this.update);
-        
-        console.log("X: ", this.ball.x, "Y: ", this.ball.y); 
-        this.ball.velY += this.gravity;
-        this.ball.x += this.ball.velX;
-        this.ball.y += this.ball.velY;
-        this.colission();
-        this.draw();
-
-        },
-    */  
-
     ballOverlap(obj1,obj2) {
         let xLength = Math.abs(obj1.x - obj2.x);
         let yLength = Math.abs(obj1.y - obj2.y);
@@ -302,59 +296,23 @@ export default {
         return distanceSquared;
     },
 
-    ballToBallColission() {
-        for (let i = 0; i < this.balls.length-1; i++) {
-            for (let j = i+1; j < this.balls.length; j++) {
-                if (this.ballOverlap(this.balls[i],this.balls[j])) {
 
-
-/*
-                    let squaredDistance = this.distanceSquared(this.balls[i],this.balls[j]);
-                    let overlap = (squaredDistance - this.balls[i].radius - this.balls[j].radius) / 2;
-
-                    let moveX = (overlap * (this.balls[i].x - this.balls[j].x) / squaredDistance);
-                    let moveY = (overlap * (this.balls[i].y - this.balls[j].y) / squaredDistance);
-
-                    this.balls[i].x = (this.balls[i].x - moveX);
-                    this.balls[i].y = (this.balls[i].y - moveY);
-
-                    this.balls[j].x = (this.balls[j].x + moveX);
-                    this.balls[j].y = (this.balls[j].y + moveY);
-                   
-                  
-
-                    let normal = 
-                        {
-                            x: (this.balls[j].x - this.balls[i].x) / squaredDistance,
-                            y: (this.balls[j].x - this.balls[i].x) / squaredDistance
-                        };
-                    
-
-                    let tangent = 
-                         {
-                             x: -normal.y,
-                             y: normal.x
-                         };
-
-                    let dotProductTangent1 = this.balls[i].velX * tangent.x + this.balls[i].velY * tangent.y;
-                    let dotProductTangent2 = this.balls[j].velX * tangent.x + this.balls[j].velY * tangent.y;
-
-                    let dotProductNormal1 = this.balls[i].velX * normal.x + this.balls[i].velY * normal.y;
-                    let dotProductNormal2 = this.balls[j].velX * normal.x + this.balls[j].velY * normal.y;
-
-                    let m1 = 
-
-                    this.balls[i].velX = (tangent.x * dotProductTangent1 + normal.x * 0.7);
-                    this.balls[i].velY = (tangent.y * dotProductTangent1 + normal.y * 0.7);
-
-                    this.balls[j].velX = (tangent.x * dotProductTangent2 + normal.x * 0.7);
-                    this.balls[j].velY = (tangent.y * dotProductTangent2 + normal.y * 0.7);
-                    
-                    */
+    weapontoWallsColission() {
+        if (this.weapon.x - (this.weapon.width / 2) <= 0) {
+            this.weapon.x += 5;
+        }
+    },
+    
+    sanitizerToBallCollision() {
+        for (let i = 0; i < this.sanitizers.length; i++) {
+            for (let j = 0; j < this.balls.length; j++) {
+                if (this.ballOverlap(this.sanitizers[i], this.balls[j])) {
+                     this.sanitizers.splice(i,1);
+                     this.balls.splice(j,1);
+                     this.$store.commit('increaseBulletsHit');
                 }
-            } 
-        } 
-        
+            }
+        }
     },
 
     colission() {
@@ -387,6 +345,7 @@ export default {
             for (let i = 0; i < this.sanitizers.length; i++) {
                 if (this.sanitizers[i].y - this.sanitizers[i].radius <= 0) {
                     this.sanitizers.splice(i,1);
+                    this.$store.commit('increaseBulletsMiss');
                 }
             }
 
@@ -407,8 +366,14 @@ export default {
             this.tipka = null;
         }
     });
-    this.init();        
-    }   
+    this.init();  
+
+    }, 
+
+    unmounted() {
+        this.requestID = false;
+    },
+    
 }
 </script>
 
@@ -421,5 +386,16 @@ export default {
 
     .img {
         display:none;
+    }
+
+    .Content {
+        display: flex;
+        flex-direction: row;
+    }
+
+
+    .stats {
+        background: gray;
+        width: 100%;
     }
 </style>
