@@ -63,14 +63,14 @@ export default {
         moveLeft(event) {
             if (this.tipka === 97 && this.weapon.x >= 0) {
                
-                this.weapon.x = this.weapon.x-10;
+                this.weapon.x = this.weapon.x - this.$store.state.settings.sanitizerSpeed;
             }
     
         },
 
         moveRight() {
             if (this.tipka === 100 && (this.weapon.x <= this.canvas.width - this.weapon.width)) {
-                this.weapon.x = this.weapon.x+10;
+                this.weapon.x = this.weapon.x + this.$store.state.settings.sanitizerSpeed;
             }
         },
 
@@ -175,6 +175,7 @@ export default {
 
             this.initBalls(this.$store.state.settings.coronaSpawned);
             this.initWeapon();
+            
             this.loop();
             /*  this.update();  */
              
@@ -273,12 +274,13 @@ export default {
                 );
                 this.ctx.fill();  /*Pobrisi ce pride do ksnih erroru*/
             }
-
-            
-            
+    
             
         },
 
+       
+
+        
     ballOverlap(obj1,obj2) {
         let xLength = Math.abs(obj1.x - obj2.x);
         let yLength = Math.abs(obj1.y - obj2.y);

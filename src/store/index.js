@@ -19,6 +19,7 @@ export default createStore({
     graphData: [],
 
     coronaData: [],
+    sloData: []
   },
 
   mutations: {
@@ -71,7 +72,19 @@ export default createStore({
       this.state.coronaData = response.data;
 
       return this.state.coronaData;
-    }
+    },
+
+    async getSloData() {
+      const response = await axios.get("https://api.sledilnik.org/api/stats");
+      this.state.sloData = response.data;
+      console.log(this.state.sloData);
+      
+      return this.state.sloData;
+
+    },
+
+   
+
   },
 
   modules: {

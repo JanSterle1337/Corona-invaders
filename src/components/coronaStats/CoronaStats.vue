@@ -1,16 +1,10 @@
 <template>
   <div class="corona-stats">
     <div class="params">
-      <select>
-          <option v-for="country in coronaData" :key ="country.name">
-              
-          </option>
-      </select>
-      <button @click="probej">Klikne me</button>
-
-      <column-chart
-        :data="[['Sun',32],['Mon',35]]"
-      ></column-chart>
+        Nc ni tuki kr me je nejki zajebavou slo api za korwno
+        <column-chart :data="specificData">
+        
+        </column-chart>
     </div>
   </div>
 </template>
@@ -23,10 +17,16 @@ export default {
     name: 'CoronaStats',
     components: {},
     data() {
-      coronaData: [];
-
-      countryData: [];
-      countrySet: [ ]
+      sloData: [];
+      Slovenia: []
+      specificData: [
+        ['ce',0],
+        ['foreign',0],
+        ['kk',0],
+        ['kp',0],
+        ['kr',0],
+        ['slj',0],
+      ]
     },
 
     methods: {
@@ -47,6 +47,7 @@ export default {
     },
 
     async created() {
+      /*
       this.countryData = await this.$store.dispatch('getCoronaData');
       this.coronaData = this.$store.state.coronaData.dates; //basiclly ceu object
 
@@ -58,8 +59,22 @@ export default {
       }
 
        this.countryData = this.coronaData[date];
-      
+*/    this.sloData = await this.$store.dispatch('getSloData');
+      console.log(this.sloData);
+      for (let i = 0; i < this.sloData.length-2; i++) {
+        if (i+1 === this.sloData.length-2) {
+           this.Slovenia = this.sloData[i];
+        }
+      }
 
+  
+      this.specificData[0][1] = this.Slovenia.statePerRegion.ce;
+      this.specificData[1][1] = this.Slovenia.statePerRegion.foreign;
+      this.specificData[2][1] = this.Slovenia.statePerRegion.kk;
+      this.specificData[3][1] = this.Slovenia.statePerRegion.kp;
+      this.specificData[4][1] = this.Slovenia.statePerRegion.kr;
+      this.specificData[5][1] = this.Slovenia.statePerRegion.lj;
+      
     }
 
 }
