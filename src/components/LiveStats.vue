@@ -21,7 +21,7 @@
 
 
 export default {
-    name: 'Stats',
+    name: 'LiveStats',
     components: {
         
     },

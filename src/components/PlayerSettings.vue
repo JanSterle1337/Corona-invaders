@@ -35,9 +35,9 @@ export default {
     data() {
         return {
             settings: {
-                 enemies: 5,
-                 gravity: 10,
-                 sanitizerSpeed: 10,
+                 enemies: 0,
+                 gravity: 0,
+                 sanitizerSpeed: 0,
             },
             errorCheckers: [
                 "There must be a least one enemy but less than 20",
@@ -85,6 +85,15 @@ export default {
                 this.changesMade = false;
             }
         }
+    },
+
+    created() {
+        this.settings.enemies = this.$store.state.settings.coronaSpawned;
+        this.settings.gravity = this.$store.state.settings.gravity * 100;
+        this.settings.sanitizerSpeed = this.$store.state.settings.sanitizerSpeed;
+        console.log("Enemies: ", this.enemies);
+        console.log("Gravity: ", this.gravity);
+        console.log("sanitizerSpeed: ", this.sanitizerSpeed);
     }
 }
 </script>

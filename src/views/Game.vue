@@ -1,19 +1,19 @@
 <template>
   <div class="home">
     <Content />
-    <Stats />
+    <LiveStats />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import Content from '../components/Content.vue';
-import Stats from '../components/Stats.vue';
+import LiveStats from '../components/LiveStats.vue';
 
 export default {
   name: 'Game',
   components: {
-    Content,Stats
+    Content,LiveStats
   }
 }
 </script>

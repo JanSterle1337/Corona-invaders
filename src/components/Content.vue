@@ -15,6 +15,7 @@
 
 <script>
 
+import axios from "axios";
 
 export default {
     name: 'Content',
@@ -350,7 +351,43 @@ export default {
             }
 
             
-       }
+       },
+
+       resetData() {
+        this.$store.commit('resetLiveStats');
+       },
+
+       pushData() {
+
+           let scoreID = Math.floor(Math.random() * 10000);
+
+           let current = new Date();
+           let cDate = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
+           let cTime = current.getHours() + ":" + current.getMinutes() + ":" + current.getSeconds();
+           let dateTime = cDate + ' ' + cTime;
+
+
+            let all = this.$store.state.bullets;
+            let missed = this.$store.state.bulletsMiss;
+            let hit = this.$store.state.bulletsHit;
+            let ratio = hit * 100 / all; 
+            ratio = ratio.toPrecision(2);
+
+
+
+
+           axios.post('http://localhost:3000/score', {
+               id: scoreID,
+               datePlayed: dateTime,
+               hitRatio: ratio,
+           })
+           .then (function (response) {
+               console.log(response)
+           })
+           .catch(function (error) {
+               console.log(error);
+           })
+        }
  
     
     },
@@ -370,8 +407,12 @@ export default {
 
     }, 
 
+    
+
     unmounted() {
         this.requestID = false;
+        this.pushData();
+        this.resetData();
     },
     
 }
