@@ -3,6 +3,7 @@
         <h1>Welcome to analytics section</h1>
         <button @click="toggleUserStats" class="active">show user stats</button>
         <button @click="toggleCoronaStats" class="active">show corona stats</button>
+        
         <UserStats  v-if=" userCompIsOpened" class="UserStats" />
         <br>
         <CoronaStats v-if="coronaCompIsOpened" class="CoronaStats" />
@@ -67,8 +68,19 @@ export default {
     }
 
     .UserStats {
+        margin-top: 30px;
         width: 100%;
     }
+
+    .CoronaStats {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;;
+        width: 100%;
+        margin-top: 30px;
+    }
+
 
     
 </style>

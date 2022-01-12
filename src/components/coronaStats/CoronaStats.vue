@@ -1,10 +1,13 @@
 <template>
   <div class="corona-stats">
     <div class="params">
-        Nc ni tuki kr me je nejki zajebavou slo api za korwno
-        <column-chart :data="specificData">
+      <h1>Statistike za dan:  {{ todayDate }}</h1>
         
+        <column-chart :data="[['active',active],['closedToDate', closedToDate],['confirmedToDate',confirmedToDate],['confirmedToday',confirmedToday]]"
+                       width="500px" height="500px">
         </column-chart>
+       
+       
     </div>
   </div>
 </template>
@@ -17,36 +20,40 @@ export default {
     name: 'CoronaStats',
     components: {},
     data() {
-      sloData: [];
-      Slovenia: []
-      specificData: [
-        ['ce',0],
-        ['foreign',0],
-        ['kk',0],
-        ['kp',0],
-        ['kr',0],
-        ['slj',0],
-      ]
+      return {
+        sloData: [],
+        Slovenia: [],
+        active: 0,
+        closedToDate: 0,
+        confirmedToDate: 0,
+        confirmedToday: 0,
+        isShown: false,
+        todayDate: "",
+      }
+     
     },
 
     methods: {
 
-      /*
-      probej() {
-        console.log("helloo");
-        let i = 0;
-        for(let country in this.coronaData['2022-01-07'].countries) {
-          
-            if (Object.prototype.hasOwnProperty.call(this.coronaData['2022-01-07'].countries,country)) {
-              console.log(country);
-              console.log(this.countrySet);
-            }
-            i++;
-        }
-      } */
+      showGraph() {
+        this.isShown = !this.isShown;
+        console.log(this.isShown);
+      }
+
     },
 
     async created() {
+
+      console.log(this.specificData);
+      this.sloData = await this.$store.dispatch('getSloData');
+      let casesData = this.sloData[this.sloData.length-2].cases;
+      this.todayDate = this.sloData[this.sloData.length-2].day + ". " + this.sloData[this.sloData.length-2].month   + ". " + this.sloData[this.sloData.length-2].year; 
+      console.log(casesData.active);
+      this.active = casesData.active;
+      this.closedToDate = casesData.closedToDate;
+      this.confirmedToDate = casesData.confirmedToDate;
+      this.confirmedToday = casesData.confirmedToday;
+      
       /*
       this.countryData = await this.$store.dispatch('getCoronaData');
       this.coronaData = this.$store.state.coronaData.dates; //basiclly ceu object
@@ -59,7 +66,8 @@ export default {
       }
 
        this.countryData = this.coronaData[date];
-*/    this.sloData = await this.$store.dispatch('getSloData');
+       /*
+*/  /*  this.sloData = await this.$store.dispatch('getSloData');
       console.log(this.sloData);
       for (let i = 0; i < this.sloData.length-2; i++) {
         if (i+1 === this.sloData.length-2) {
@@ -68,13 +76,13 @@ export default {
       }
 
   
-      this.specificData[0][1] = this.Slovenia.statePerRegion.ce;
-      this.specificData[1][1] = this.Slovenia.statePerRegion.foreign;
-      this.specificData[2][1] = this.Slovenia.statePerRegion.kk;
-      this.specificData[3][1] = this.Slovenia.statePerRegion.kp;
-      this.specificData[4][1] = this.Slovenia.statePerRegion.kr;
-      this.specificData[5][1] = this.Slovenia.statePerRegion.lj;
-      
+      this.specificData[0][0] = this.Slovenia.statePerRegion.ce;
+      this.specificData[1][0] = this.Slovenia.statePerRegion.foreign;
+      this.specificData[2][0] = this.Slovenia.statePerRegion.kk;
+      this.specificData[3][0] = this.Slovenia.statePerRegion.kp;
+      this.specificData[4][0] = this.Slovenia.statePerRegion.kr;
+      this.specificData[5][0] = this.Slovenia.statePerRegion.lj;
+      */
     }
 
 }
