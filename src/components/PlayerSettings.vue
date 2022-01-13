@@ -21,6 +21,13 @@
             
         </div>
         <p class="error" v-if="sanitizerError"> {{ errorCheckers[2] }}</p>
+        <div class="row-alignment">
+            <p>Bullets speed:</p>
+            <input type="number" name="bulletsSpeed" v-model="settings.bulletsSpeed">
+            
+        </div>
+
+        <p class="error" v-if="sanitizerError"> {{ errorCheckers[3] }}</p>
         <div class = "column-alignment">
             <button class="confirm">Confirm</button>
             <p class="green" v-if="changesMade">Settings have been changed</p>
@@ -38,15 +45,18 @@ export default {
                  enemies: 0,
                  gravity: 0,
                  sanitizerSpeed: 0,
+                 bulletsSpeed: 0,
             },
             errorCheckers: [
                 "There must be a least one enemy but less than 20",
                 "Gravity must be bigger than 2 but smaller than 25",
-                "The sanitizer speed must be bigger than 1 but smaller than 15"
+                "The sanitizer speed must be bigger than 1 but smaller than 15",
+                "The bullets speed must be between -2 and -10"
                 ],
             enemiesError: false,
             gravityError: false,
             sanitizerError: false,
+            bulletsError: false,
             changesMade: false,
         }
     },
@@ -73,8 +83,13 @@ export default {
                 this.sanitizerError = true;
             }
 
+            if (this.settings.bulletsSpeed <= -2 && this.settings.bulletsSpeed >= -10) {
+                this.bulletsError = false;
+            } else {
+                this.bulletsError = true;
+            }
 
-            if (this.enemiesError == false && this.gravityError== false && this.sanitizerError == false) {
+            if (this.enemiesError == false && this.gravityError== false && this.sanitizerError == false && this.bulletsError == false) {
 
                 this.settings.gravity = this.settings.gravity / 100;
                 this.$store.commit('updateSettings',this.settings);
@@ -91,6 +106,7 @@ export default {
         this.settings.enemies = this.$store.state.settings.coronaSpawned;
         this.settings.gravity = this.$store.state.settings.gravity * 100;
         this.settings.sanitizerSpeed = this.$store.state.settings.sanitizerSpeed;
+        this.settings.bulletsSpeed = this.$store.state.settings.bulletsSpeed;
         console.log("Enemies: ", this.enemies);
         console.log("Gravity: ", this.gravity);
         console.log("sanitizerSpeed: ", this.sanitizerSpeed);

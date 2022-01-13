@@ -1,13 +1,18 @@
 <template>
   <div class="corona-stats">
+    <h1>Statistike za dan:  {{ todayDate }}</h1>
     <div class="params">
-      <h1>Statistike za dan:  {{ todayDate }}</h1>
-        
+      <div class="column-chart-wrapper">
         <column-chart :data="[['active',active],['closedToDate', closedToDate],['confirmedToDate',confirmedToDate],['confirmedToday',confirmedToday]]"
                        width="500px" height="500px">
         </column-chart>
-       
-       
+      </div>  
+      <div class="pie-chart-wrapper">
+        <h2>tested positive percantage: {{ positivePercantage }} %</h2>
+        <pie-chart
+        :data="[['tested',tested],['testedPositive',testedPositive]]" class="pie">
+        </pie-chart>
+       </div>
     </div>
   </div>
 </template>
@@ -29,8 +34,16 @@ export default {
         confirmedToday: 0,
         isShown: false,
         todayDate: "",
+        tested: 0,
+        testedPositive: 0,
       }
      
+    },
+
+    computed: {
+      positivePercantage() {
+        return (this.testedPositive * 100 /  this.tested).toFixed(2);
+      }
     },
 
     methods: {
@@ -53,36 +66,11 @@ export default {
       this.closedToDate = casesData.closedToDate;
       this.confirmedToDate = casesData.confirmedToDate;
       this.confirmedToday = casesData.confirmedToday;
+
+      this.tested = this.sloData[this.sloData.length-2].performedTests;
+      this.testedPositive = this.sloData[this.sloData.length-2].positiveTests;
       
-      /*
-      this.countryData = await this.$store.dispatch('getCoronaData');
-      this.coronaData = this.$store.state.coronaData.dates; //basiclly ceu object
-
-      console.log("Corona data::: ", this.coronaData['2022-01-07']); 
-      console.log("Specificna: ", this.coronaData['2022-01-07'].countries.Slovenia);
-      let date = "";
-      for(let propertyName in this.coronaData) {
-        date = propertyName;
-      }
-
-       this.countryData = this.coronaData[date];
-       /*
-*/  /*  this.sloData = await this.$store.dispatch('getSloData');
-      console.log(this.sloData);
-      for (let i = 0; i < this.sloData.length-2; i++) {
-        if (i+1 === this.sloData.length-2) {
-           this.Slovenia = this.sloData[i];
-        }
-      }
-
-  
-      this.specificData[0][0] = this.Slovenia.statePerRegion.ce;
-      this.specificData[1][0] = this.Slovenia.statePerRegion.foreign;
-      this.specificData[2][0] = this.Slovenia.statePerRegion.kk;
-      this.specificData[3][0] = this.Slovenia.statePerRegion.kp;
-      this.specificData[4][0] = this.Slovenia.statePerRegion.kr;
-      this.specificData[5][0] = this.Slovenia.statePerRegion.lj;
-      */
+      
     }
 
 }
@@ -90,4 +78,21 @@ export default {
 
 <style>
 
+  .params {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+  }
+
+  .pie-chart-wrapper {
+    margin: 20px;
+  }
+
+  .column-chart-wrapper {
+    margin: 20px;
+  }
+
+ 
 </style>

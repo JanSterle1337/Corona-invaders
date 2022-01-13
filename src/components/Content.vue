@@ -206,7 +206,7 @@ export default {
                 x: this.weapon.x + (this.weapon.width/2),
                 y: this.weapon.y - (this.weapon.height/2),
                 velX: 0,
-                velY: -5,
+                velY: this.$store.state.settings.bulletsSpeed,
                 }
                 this.sanitizers.push(this.sanitizer);
                 this.$store.state.bullets +=1;
@@ -238,7 +238,7 @@ export default {
 
         drawWeapon() {
             this.ctx.beginPath();
-            this.ctx.fillStyle = "gray",
+            this.ctx.fillStyle = "white",
             this.ctx.rect(this.weapon.x,this.weapon.y,this.weapon.width,this.weapon.height);
             this.ctx.fill();
 

@@ -14,6 +14,7 @@ export default createStore({
       coronaSpawned: 10,
       gravity: 0.10,
       sanitizerSpeed: 5,
+      bulletsSpeed: -5,
     },
     stats: [],
     graphData: [],
@@ -37,6 +38,7 @@ export default createStore({
       state.settings.coronaSpawned = data.enemies;
       state.settings.gravity = data.gravity;
       state.settings.sanitizerSpeed = data.sanitizerSpeed;
+      state.settings.bulletsSpeed = data.bulletsSpeed;
       console.log("Iz mutacije",data);
       console.log("Iz stata: ", state.settings);
       
